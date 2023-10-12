@@ -11,10 +11,10 @@
 
 <hr>
 <h2>Add a new post</h2>
-<form action="/insert_post" method="post>
+<form action="/insert_post" method="post">
   <div>
-    <label for="title_field">Title</label>
-    <input id="title_field" type="text" name="query_title">
+    <label for="title_box">Title</label>
+    <input type="text" id="title_box" name="query_title">
   </div>
   
   <div>
@@ -28,14 +28,13 @@
 
     <input type="hidden" id="board_id_field" name="query_board_id" value="<%= @the_board.id %>">
 
-  <button>Add Post</button>
+  <button>Add post</button>
 </form>
 
 <hr>
 
-<h2>Active Posts</h2>
-
 <% matching_posts = Post.where({ :board_id => @the_board.id }).order({:expires_on => :asc})%>
+<h2>Active Posts</h2>
 
 <table border = "1">
   <tr>
@@ -45,11 +44,34 @@
     <th>Expires On</th>
   </tr>
   <%matching_posts.each do |a_post| %>
+    <%if a_post.expires_on > Date.today %>
+      <tr>
+        <td><%=a_post.title%></td>
+        <td><%=a_post.body%></td>
+        <td><%=a_post.created_at.strftime("%b %e, %Y")%></td>
+        <td><%=a_post.expires_on.strftime("%b %e, %Y")%></td>
+      </tr>
+    <% end %>
+  <% end %>
+</table>
+
+<hr>
+<h2>Expired posts</h2>
+<table border = "1">
   <tr>
-    <td><%=a_post.title%></td>
-    <td><%=a_post.body%></td>
-    <td><%=a_post.created_at.strftime("%b %e, %Y")%></td>
-    <td><%=a_post.expires_on.strftime("%b %e, %Y")%></td>
+    <th>Title</th>
+    <th>Body</th>
+    <th>Posted On</th>
+    <th>Expires On</th>
   </tr>
+  <%matching_posts.each do |a_post| %>
+    <%if a_post.expires_on < Date.today %>
+      <tr>
+        <td><%=a_post.title%></td>
+        <td><%=a_post.body%></td>
+        <td><%=a_post.created_at.strftime("%b %e, %Y")%></td>
+        <td><%=a_post.expires_on.strftime("%b %e, %Y")%></td>
+      </tr>
+    <% end %>
   <% end %>
 </table>
